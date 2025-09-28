@@ -22,6 +22,7 @@ export const StyledResultWrapper = styled.div`
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+  padding: 60px 0;
 `;
 
 export const StyledResultDetail = styled.div`

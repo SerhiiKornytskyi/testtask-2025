@@ -1,89 +1,115 @@
 import { useState, useEffect, MouseEvent } from 'react'
 import { useFetchData } from '@/customHooks/useFetchData'
-import { useSearch, useNavigate } from '@tanstack/react-router'
-import type {MainPageState} from '../../utils/types';
+import { useSearch, useNavigate, useRouter } from '@tanstack/react-router'
+import type { MainPageState, FilterState } from '../../utils/types'
 import {
     StyledResultWrapper,
     StyledSearchResultCard,
     StyledSearchResultCardContainer,
-} from "./styled";
+} from './styled'
 
 import Paginator from '../paginator/Paginator'
+import Filter from '../filter/Filter'
 
 function Main() {
-    const baseApiUrl = 'https://rickandmortyapi.com/api';
+    const baseApiUrl = 'https://rickandmortyapi.com/api'
     const navigate = useNavigate()
     const search = useSearch({ from: '/' })
 
-
     const [state, setState] = useState<MainPageState>({
-        searchTerm: "",
         nextPage: null,
         prevPage: null,
-        // Fallback to page 1 if negative or 0 provided
-        pageNum: (search.page <= 0) ? 1 : search.page ?? 1,
-        pageSize: 10,
+        pageNum: search.page && search.page > 0 ? search.page : 1,
+        filterState: {
+            name: search.name || '',
+            status: search.status || '',
+        },
     })
 
-    // storing url in state ho trigger re-request through updating it
-    const [url, setUrl] = useState(`${baseApiUrl}/character?page=${state.pageNum}`);
+    // build URL based on current state params
+    const buildUrl = (page: number, filter: FilterState) => {
+        const params = new URLSearchParams()
+        params.set('page', page.toString())
+        if (filter.name) params.set('name', filter.name)
+        if (filter.status) params.set('status', filter.status)
+        return `${baseApiUrl}/character?${params.toString()}`
+    }
 
+    const [url, setUrl] = useState(buildUrl(state.pageNum, state.filterState))
     const { data, isPending, isError } = useFetchData(url)
 
-
     useEffect(() => {
-        console.log("data", data, isError)
-        if (!isPending && !isError) {
-            const {next, prev} = data.info;
-            setState({...state, nextPage: next, prevPage: prev});
+        if (!isPending && !isError && data?.info) {
+            setState(prev => ({
+                ...prev,
+                nextPage: data.info.next,
+                prevPage: data.info.prev,
+            }))
         }
     }, [data, isPending, isError])
 
-    if (isPending) {
-        return <span>Loading...</span>
+    // build search object dynamically
+    const getSearchParam = (filterState: FilterState, pageNum: number) => {
+        const searchParams: Record<string, string | number> = { page: pageNum }
+        if (filterState.name) searchParams.name = filterState.name
+        if (filterState.status) searchParams.status = filterState.status
+        return searchParams
     }
 
-    if (isError) {
-        return <span>Error!</span>
+    const refetch = () => {
+        const newUrl = buildUrl(state.pageNum, state.filterState) + `&refetch=${Date.now()}`
+        setUrl(newUrl)
+
+    }
+
+    const handleFilterChange = (newFilterState: FilterState) => {
+        const newPage = 1
+        setState(prev => ({
+            ...prev,
+            filterState: newFilterState,
+            pageNum: newPage,
+        }))
+
+        const newUrl = buildUrl(newPage, newFilterState)
+        setUrl(newUrl)
+
+        navigate({ search: getSearchParam(newFilterState, newPage) })
     }
 
     const goToNextPage = (e: MouseEvent<HTMLElement>) => {
         e.preventDefault()
         if (state.nextPage) {
-            setUrl(state.nextPage) // update URL to next page
-            setState(prev => ({ ...prev, pageNum: prev.pageNum + 1 }))
-            navigate({
-                search: { page: state.pageNum + 1 },
-            })
+            const newPage = state.pageNum + 1
+            setUrl(state.nextPage)
+            setState(prev => ({ ...prev, pageNum: newPage }))
+            navigate({ search: getSearchParam(state.filterState, newPage) })
         }
     }
 
     const goToPrevPage = (e: MouseEvent<HTMLElement>) => {
         e.preventDefault()
         if (state.prevPage) {
-            setUrl(state.prevPage) // update URL to prev page
-            setState(prev => ({ ...prev, pageNum: prev.pageNum - 1 }))
-            navigate({
-                search: { page: state.pageNum - 1 },
-            })
+            const newPage = state.pageNum - 1
+            setUrl(state.prevPage)
+            setState(prev => ({ ...prev, pageNum: newPage }))
+            navigate({ search: getSearchParam(state.filterState, newPage) })
         }
     }
 
+    if (isPending) return <span>Loading...</span>
+    if (isError) return <span>Error!</span>
+
     return (
         <div>
+            <Filter state={state.filterState} handleFilterChange={handleFilterChange} refetch={refetch} />
             <StyledResultWrapper>
-                {data?.results?.map((char) => (
+                {data?.results?.map(char => (
                     <StyledSearchResultCardContainer key={char.id}>
-                        <StyledSearchResultCard
-                            to={`character/$id`}
-                            params={{ id: char.id.toString() }}
-                        >
+                        <StyledSearchResultCard to={`character/${char.id}`}>
                             <div>
-                                <img src={char.image} alt="pic"/>
+                                <img src={char.image} alt={char.name} />
                             </div>
-                            <span>
-                                {char.name}
-                            </span>
+                            <span>{char.name}</span>
                         </StyledSearchResultCard>
                     </StyledSearchResultCardContainer>
                 ))}
@@ -91,8 +117,8 @@ function Main() {
             <Paginator
                 goToPrevPage={goToPrevPage}
                 goToNextPage={goToNextPage}
-                isNextVisible={!!state.nextPage}
-                isPrevVisible={!!state.prevPage}
+                isNextVisible={state.nextPage}
+                isPrevVisible={state.prevPage}
                 pageNum={state.pageNum}
             />
         </div>

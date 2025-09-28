@@ -1,9 +1,8 @@
 export interface MainPageState {
-    searchTerm: string;
     nextPage: string | null;
     prevPage: string | null;
     pageNum: number;
-    pageSize: number;
+    filterState: FilterState;
 }
 
 export interface SearchResult {
@@ -11,3 +10,9 @@ export interface SearchResult {
     image: string;
     url: string;
 }
+
+export interface FilterState {
+    name: string;
+    status: string;
+}
+

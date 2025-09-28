@@ -5,9 +5,10 @@ export function useFetchData(url) {
     return useQuery({
         queryKey: ['fetchCharacters', url],
         queryFn: async () => {
+            console.log("Fetch triggered !!!");
             const res = await fetch(url)
             if (!res.ok) {
-                // throw new Error(`Error: ${res.status}`)
+                throw new Error(`Error: ${res.status}`)
             }
             return res.json();
         },

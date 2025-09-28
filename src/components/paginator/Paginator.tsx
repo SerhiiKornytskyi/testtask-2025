@@ -1,4 +1,3 @@
-import {useState, useEffect} from 'react'
 import {StyledPaginator, StyledPaginatorItem} from "./styled";
 
 function Paginator({goToPrevPage, goToNextPage, isNextVisible, isPrevVisible, pageNum}) {

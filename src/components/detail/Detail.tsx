@@ -1,11 +1,10 @@
-import {useState, useEffect} from 'react'
 import {useParams} from "@tanstack/react-router";
 import {StyledWrapper} from "./styled";
 import { useFetchData } from '@/customHooks/useFetchData';
 
 function Detail() {
     const { id } = useParams({ from: '/character/$id' })
-    const { data, isPending, isError, refetch } = useFetchData(`https://rickandmortyapi.com/api/character/${id}`);
+    const { data, isPending, isError } = useFetchData(`https://rickandmortyapi.com/api/character/${id}`);
 
     if (isPending) return <span>Loading...</span>
     if (isError) return <span>Error!</span>
