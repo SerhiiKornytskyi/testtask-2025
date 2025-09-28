@@ -8,8 +8,16 @@ export const StyledPaginator = styled.div`
   box-sizing: border-box;
   padding: 0 25px;
   font-size: 20px;
+  width: 100%;
+  height: 55px;
+  background-color: rgba(0,0,0,0.6);
+  position: fixed;
+  bottom: 0;
+  
 `;
 
-export const StyledPaginatorItem = styled(Link)`
+export const StyledPaginatorItem = styled(Link)<{ visible: boolean }>`
+  visibility: ${({ visible }) => (visible ? "visible" : "hidden")};
 `;
+
 

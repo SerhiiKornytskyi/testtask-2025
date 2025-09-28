@@ -7,36 +7,47 @@ import {
   createRoute,
   createRouter,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 
 import './styles.css'
-import reportWebVitals from './reportWebVitals.ts'
 
 import App from './App.tsx'
+import Detail from './components/detail/Detail.tsx'
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
 
 const rootRoute = createRootRoute({
   component: () => (
-    <>
+    <QueryClientProvider client={queryClient}>
       <Outlet />
-    </>
+    </QueryClientProvider>
   ),
 })
 
-const indexRoute = createRoute({
+
+const mainRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/',
   component: App,
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      page: Number(search.page) || 1,
+    }
+  },
 })
 
-const routeTree = rootRoute.addChildren([indexRoute])
+const detailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/character/$id',
+  component: Detail,
+})
+
+const routeTree = rootRoute.addChildren([mainRoute, detailRoute])
 
 const router = createRouter({
   routeTree,
-  context: {},
   defaultPreload: 'intent',
   scrollRestoration: true,
-  defaultStructuralSharing: true,
-  defaultPreloadStaleTime: 0,
 })
 
 declare module '@tanstack/react-router' {
@@ -55,7 +66,3 @@ if (rootElement && !rootElement.innerHTML) {
   )
 }
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals()

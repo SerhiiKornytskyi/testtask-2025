@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import {Link} from '@tanstack/react-router'
 
 export const StyledSearchResults = styled.div`
   background-color: darkslategray;
@@ -20,14 +21,16 @@ export const StyledResultWrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
 `;
 
 export const StyledResultDetail = styled.div`
   background-color: #1c440f;
 `;
 
-export const StyledSearchResultCard = styled.div`
+export const StyledSearchResultCard = styled(Link)`
   background-color: #000;
+  display: block;
   box-sizing: border-box;
   padding: 10px;
   max-width: 100%;
