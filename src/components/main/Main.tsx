@@ -27,7 +27,7 @@ function Main() {
     })
 
     // build URL based on current state params
-    const buildUrl = (page: number, filter: FilterState) => {
+    const buildUrl = (page: number, filter: FilterState): string => {
         const params = new URLSearchParams()
         params.set('page', page.toString())
         if (filter.name) params.set('name', filter.name)
@@ -35,7 +35,7 @@ function Main() {
         return `${baseApiUrl}/character?${params.toString()}`
     }
 
-    const [url, setUrl] = useState(buildUrl(state.pageNum, state.filterState))
+    const [url, setUrl] = useState<string>(buildUrl(state.pageNum, state.filterState))
     const { data, isPending, isError, error } = useFetchData(url)
 
     useEffect(() => {
@@ -45,16 +45,11 @@ function Main() {
                 nextPage: data.info.next,
                 prevPage: data.info.prev,
             }))
-
-            const getAllItems = (url) => {
-                console.log(url)
-                getAllItems(state.nextPage);
-            }
         }
     }, [data, isPending, isError])
 
     // build search object dynamically
-    const getSearchParam = (filterState: FilterState, pageNum: number) => {
+    const getSearchParam = (filterState: FilterState, pageNum: number): Record<string, string | number> => {
         const searchParams: Record<string, string | number> = { page: pageNum }
         if (filterState.name) searchParams.name = filterState.name
         if (filterState.status) searchParams.status = filterState.status
@@ -62,9 +57,9 @@ function Main() {
     }
 
     const refetch = () => {
+        // hack to re-fetch
         const newUrl = buildUrl(state.pageNum, state.filterState) + `&refetch=${Date.now()}`
         setUrl(newUrl)
-
     }
 
     const handleFilterChange = (newFilterState: FilterState) => {

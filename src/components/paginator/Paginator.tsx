@@ -1,6 +1,7 @@
 import {StyledPaginator, StyledPaginatorItem} from "./styled";
+import type { PaginatorProps } from '@/utils/types'
 
-function Paginator({goToPrevPage, goToNextPage, isNextVisible, isPrevVisible, pageNum}) {
+function Paginator({goToPrevPage, goToNextPage, isNextVisible, isPrevVisible, pageNum}: PaginatorProps) {
 
     return (
         <StyledPaginator>

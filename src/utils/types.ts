@@ -16,3 +16,18 @@ export interface FilterState {
     status: string;
 }
 
+export interface FilterProps {
+    state: FilterState;
+    handleFilterChange: (newFilterState: FilterState) => void;
+    refetch: () => void;
+}
+
+export interface PaginatorProps {
+    goToPrevPage: () => void;
+    goToNextPage: () => void;
+    isNextVisible: boolean;
+    isPrevVisible: boolean;
+    pageNum: number;
+}
+
+

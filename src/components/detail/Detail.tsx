@@ -4,10 +4,18 @@ import { useFetchData } from '@/customHooks/useFetchData';
 
 function Detail() {
     const { id } = useParams({ from: '/character/$id' })
-    const { data, isPending, isError } = useFetchData(`https://rickandmortyapi.com/api/character/${id}`);
+    const { data, isPending, isError, error } = useFetchData(`https://rickandmortyapi.com/api/character/${id}`);
 
-    if (isPending) return <span>Loading...</span>
-    if (isError) return <span>Error!</span>
+    if (isPending) return (
+        <StyledWrapper>
+            <span>Loading...</span>
+        </StyledWrapper>
+    )
+    if (isError) return (
+        <StyledWrapper>
+            <span>Problem: {error.message}!</span>
+        </StyledWrapper>
+    )
 
     return (
             <StyledWrapper>

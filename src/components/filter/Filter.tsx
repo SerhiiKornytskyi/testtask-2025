@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { StyledFilterWrapper } from './styled'
-import type { FilterState } from '@/utils/types'
+import type { FilterState, FilterProps } from '@/utils/types'
 
-function Filter({state, handleFilterChange, refetch}) {
+function Filter({state, handleFilterChange, refetch}: FilterProps) {
 
     const clearState: FilterState = {
         status: '',
