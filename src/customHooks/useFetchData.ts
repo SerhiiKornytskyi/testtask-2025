@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-// custom hook to perform fetch operation with react-query
+// custom hook to perform fetch operation
 export function useFetchData(url) {
     return useQuery({
         queryKey: ['fetchCharacters', url],

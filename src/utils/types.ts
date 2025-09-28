@@ -8,7 +8,7 @@ export interface MainPageState {
 export interface SearchResult {
     name: string;
     image: string;
-    url: string;
+    id: string;
 }
 
 export interface FilterState {

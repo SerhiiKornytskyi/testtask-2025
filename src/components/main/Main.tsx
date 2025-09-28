@@ -1,6 +1,6 @@
-import { useState, useEffect, MouseEvent } from 'react'
+import { useState, useEffect, MouseEvent, useRef } from 'react'
 import { useFetchData } from '@/customHooks/useFetchData'
-import { useSearch, useNavigate, useRouter } from '@tanstack/react-router'
+import { useSearch, useNavigate } from '@tanstack/react-router'
 import type { MainPageState, FilterState } from '../../utils/types'
 import {
     StyledResultWrapper,
@@ -36,7 +36,7 @@ function Main() {
     }
 
     const [url, setUrl] = useState(buildUrl(state.pageNum, state.filterState))
-    const { data, isPending, isError } = useFetchData(url)
+    const { data, isPending, isError, error } = useFetchData(url)
 
     useEffect(() => {
         if (!isPending && !isError && data?.info) {
@@ -45,6 +45,11 @@ function Main() {
                 nextPage: data.info.next,
                 prevPage: data.info.prev,
             }))
+
+            const getAllItems = (url) => {
+                console.log(url)
+                getAllItems(state.nextPage);
+            }
         }
     }, [data, isPending, isError])
 
@@ -97,7 +102,7 @@ function Main() {
     }
 
     if (isPending) return <span>Loading...</span>
-    if (isError) return <span>Error!</span>
+    if (isError) return <span>Problem: {error.message}!</span>
 
     return (
         <div>
