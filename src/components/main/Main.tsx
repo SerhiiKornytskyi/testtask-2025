@@ -1,7 +1,7 @@
 import { useState, useEffect, MouseEvent, useRef } from 'react'
 import { useFetchData } from '@/customHooks/useFetchData'
 import { useSearch, useNavigate } from '@tanstack/react-router'
-import type { MainPageState, FilterState } from '../../utils/types'
+import type { MainPageState, FilterState, SearchResult } from '../../utils/types'
 import {
     StyledResultWrapper,
     StyledSearchResultCard,
@@ -103,7 +103,7 @@ function Main() {
         <div>
             <Filter state={state.filterState} handleFilterChange={handleFilterChange} refetch={refetch} />
             <StyledResultWrapper>
-                {data?.results?.map(char => (
+                {data?.results?.map((char: SearchResult) => (
                     <StyledSearchResultCardContainer key={char.id}>
                         <StyledSearchResultCard to={`character/${char.id}`}>
                             <div>
