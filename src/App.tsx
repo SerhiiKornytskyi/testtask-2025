@@ -1,6 +1,4 @@
-import logo from './logo.svg'
 import Main from "./components/main/Main"
-import Detail from "./components/detail/Detail"
 
 function App() {
   return (

@@ -57,7 +57,7 @@ function Main() {
     }
 
     const refetch = () => {
-        // hack to re-fetch
+        // hack to re-fetch, altering the url
         const newUrl = buildUrl(state.pageNum, state.filterState) + `&refetch=${Date.now()}`
         setUrl(newUrl)
     }
